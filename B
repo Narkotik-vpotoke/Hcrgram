@@ -1,0 +1,254 @@
+# Osint<font></font>
+'''<font></font>
+.phone</code> <code>.id</code> <code>.ip</code>:: Пробив по osint ботам. \n\n<b>Использование</b>: \n<code>.phone</code> <i>Поиск по телефону</i>\n<code>.id</code> <i>id телеграм пользователя</i>\n<code>.ip</code> <i>ipaddress</i><font></font>
+'''<font></font>
+<font></font>
+from telethon import events<font></font>
+import asyncio<font></font>
+import re<font></font>
+import os<font></font>
+import requests, json<font></font>
+<font></font>
+<font></font>
+def get_tuples_until_myid(lst):<font></font>
+    new_lst = []<font></font>
+    for tpl in lst:<font></font>
+        if tpl[0] == 5:<font></font>
+            break<font></font>
+        new_lst.append(tpl)<font></font>
+    return new_lst<font></font>
+<font></font>
+def a(client):<font></font>
+	@client.on(events.NewMessage(pattern=r"\.id", outgoing=True))<font></font>
+	async def _(event):<font></font>
+<font></font>
+		args = event.text.split(' ')<font></font>
+		print(args)<font></font>
+		if len(args) <2 or not args[-1].isdigit():<font></font>
+			await event.edit('<b>❌ Использовать с ID! Пример:</b>\n<code>.id 1234567</code>', parse_mode='html')<font></font>
+			return<font></font>
+		elif "+" in args[-1]:<font></font>
+			await event.edit('<b>❌ Для поиска по номеру используйте команду</b><code>.phone</code> <i>номер</i>')<font></font>
+		else:<font></font>
+			id_to_search = args[-1]<font></font>
+<font></font>
+		async def search_quickosint(id_to_search):<font></font>
+			await client.send_message('https://t.me/dkdkkerkqwe_bot','/start')<font></font>
+			await client.send_message('https://t.me/dkdkkerkqwe_bot',f'#id{id_to_search}')<font></font>
+			await asyncio.sleep(3)<font></font>
+			message_from_bot = [i.text async for i in client.iter_messages('https://t.me/dkdkkerkqwe_bot', limit=1)][0]<font></font>
+			pat = r'\n-----'#r'(.|\n)+(?=-----)'<font></font>
+			a = re.split(pat, message_from_bot)<font></font>
+			message_from_bot = a[0]<font></font>
+<font></font>
+			return message_from_bot<font></font>
+<font></font>
+		async def search_gta(id_to_search):<font></font>
+			await client.send_message('https://t.me/askjldfhashdfhlasdbot','/start')<font></font>
+			await asyncio.sleep(1)<font></font>
+			await client.send_message('https://t.me/askjldfhashdfhlasdbot',f'{id_to_search}')<font></font>
+			await asyncio.sleep(1)<font></font>
+			message_from_bot = [i async for i in client.iter_messages('https://t.me/askjldfhashdfhlasdbot', limit=1)][0]<font></font>
+			await asyncio.sleep(0.5)<font></font>
+			await message_from_bot.click(0)<font></font>
+<font></font>
+			await asyncio.sleep(3)<font></font>
+			message_from_bot = [i.text async for i in client.iter_messages('https://t.me/askjldfhashdfhlasdbot', limit=1)][0]<font></font>
+			if 'Как увеличить лимит?' in message_from_bot:<font></font>
+				return 'Лимиты в боте закончились'<font></font>
+			return message_from_bot<font></font>
+<font></font>
+		async def search_telescan(id_to_search):<font></font>
+			await client.send_message('https://t.me/Hcrgram_osint_3_bot','/start')<font></font>
+			await asyncio.sleep(3)<font></font>
+			await client.send_message('https://t.me/Hcrgram_osint_3_bot',f'{id_to_search}')<font></font>
+			await asyncio.sleep(3)<font></font>
+			message_from_bot = []<font></font>
+			async for i in client.iter_messages('https://t.me/Hcrgram_osint_3_bot', limit=3):<font></font>
+				if not 'Я не нашёл' in i.text and not 'запросов' in i.text and not 'запрещён' in i.text and not id_to_search == i.text:<font></font>
+					message_from_bot.append(i.text)<font></font>
+					print(i.text)<font></font>
+				else:<font></font>
+<font></font>
+					message_from_bot.append("Не найдено информации")<font></font>
+<font></font>
+			print(message_from_bot)<font></font>
+<font></font>
+			# message_from_bot = [i.text if not i.text in ['Я не нашёл','запросов','запрещён','Запускаю','Количество'] else None async for i in client.iter_messages('https://t.me/Hcrgram_osint_3_bot', limit=2)][0]<font></font>
+			return max(message_from_bot).replace('__','').replace('**','')<font></font>
+<font></font>
+		async def search_insight(id_to_search):<font></font>
+			myid = (await client.get_me()).id<font></font>
+			bot = 'https://t.me/ibhldr_bot'<font></font>
+			await client.send_message(bot,'/start')<font></font>
+			await asyncio.sleep(3)<font></font>
+			await client.send_message(bot,f'{id_to_search}')<font></font>
+			await asyncio.sleep(5)<font></font>
+			messages1 = []<font></font>
+			async for i in client.iter_messages(bot, limit=10):<font></font>
+				try: <font></font>
+					i.from_id.user_id<font></font>
+					break<font></font>
+				except:<font></font>
+					d = i.text.replace('__','').replace('**','')<font></font>
+					forb_phrases = [<font></font>
+						'Моя база',<font></font>
+						'Данные обновлены.',<font></font>
+						'❌',<font></font>
+						'unamer_bot',<font></font>
+						'Подсказка'<font></font>
+					]<font></font>
+<font></font>
+					if not d in forb_phrases:<font></font>
+						messages1.append(d)<font></font>
+<font></font>
+			return reversed(messages1)<font></font>
+<font></font>
+<font></font>
+		await event.edit('🔲🔲🔲🔲\n<b>Прогресс: 0%</b>', parse_mode='html')<font></font>
+		qos = await search_quickosint(id_to_search)<font></font>
+		qos = qos.replace('__','').replace('**','').replace('`','')<font></font>
+		await event.edit('⬛️🔲🔲🔲\n<b>Прогресс: 25%</b>', parse_mode='html')<font></font>
+		gta = await search_gta(id_to_search)<font></font>
+		gta = gta.replace('__','').replace('**','').replace('`','')<font></font>
+		await event.edit('⬛️⬛️🔲🔲\n<b>Прогресс: 50%</b>', parse_mode='html')<font></font>
+		telescan = await search_telescan(id_to_search)<font></font>
+		await event.edit('⬛️⬛️⬛️🔲\n<b>Прогресс: 75%</b>', parse_mode='html')<font></font>
+		insight = await search_insight(id_to_search)<font></font>
+		await event.edit('🟩🟩🟩🟩\n<b>Прогресс: 100%</b>', parse_mode='html')<font></font>
+		await asyncio.sleep(0.6)<font></font>
+		await event.edit('⬇️\n<b>Отправка файла...</b>⬇️', parse_mode='html')<font></font>
+<font></font>
+		if f'{id_to_search}.txt' in os.listdir('deanons'):<font></font>
+			os.remove(f'deanons/{id_to_search}.txt')<font></font>
+<font></font>
+		with open(f'deanons/{id_to_search}.txt', 'a+', encoding='utf-8') as file:<font></font>
+			file.write(f'QUICK OSINT: ------------------')<font></font>
+			file.write(f'\n{qos}')<font></font>
+			file.write(f'\n\n\nGTA SEARCH: ------------------')<font></font>
+			file.write(f'\n{gta}')<font></font>
+			file.write(f'\n\n\nTELESCAN: ------------------')<font></font>
+			file.write(f'\n{telescan}')<font></font>
+			file.write(f'\n\n\nINSIGHT: ------------------')<font></font>
+			sss = '\n'.join(insight)<font></font>
+			file.write(f"\n{sss}")<font></font>
+<font></font>
+		await event.delete()<font></font>
+<font></font>
+		try:<font></font>
+			chatid = event.chat.id <font></font>
+		except:<font></font>
+			chatid = event.message.peer_id.user_id<font></font>
+<font></font>
+		await client.send_file(<font></font>
+			chatid,<font></font>
+			file=f'deanons/{id_to_search}.txt', <font></font>
+			caption=f'<b>Результаты поиска в Osint ботах по ID: </b><code>{id_to_search}</code>', <font></font>
+			parse_mode='html'<font></font>
+		)<font></font>
+<font></font>
+	@client.on(events.NewMessage(pattern=r"\.phone", outgoing=True))<font></font>
+	async def _(event):<font></font>
+<font></font>
+		args = event.text.split(' ')<font></font>
+		print(args)<font></font>
+		if len(args) <2 or not args[-1].replace('+','').isdigit():<font></font>
+			await event.edit('<b>❌ Использовать с номером! Пример:</b>\n<code>.phone +1234567</code>', parse_mode='html')<font></font>
+			return<font></font>
+		else:<font></font>
+			id_to_search = args[-1].replace('+','')<font></font>
+<font></font>
+		async def search_quickosint(id):<font></font>
+			await client.send_message('https://t.me/dkdkkerkqwe_bot','/start')<font></font>
+			await client.send_message('https://t.me/dkdkkerkqwe_bot',f'+{id_to_search}')<font></font>
+			await asyncio.sleep(3)<font></font>
+			message_from_bot = [i.text async for i in client.iter_messages('https://t.me/dkdkkerkqwe_bot', limit=1)][0]<font></font>
+			pat = r'\n-----'<font></font>
+			a = re.split(pat, message_from_bot)<font></font>
+			message_from_bot = a[0]<font></font>
+<font></font>
+			return message_from_bot<font></font>
+<font></font>
+		async def search_gta(id):<font></font>
+			await client.send_message('https://t.me/askjldfhashdfhlasdbot','/start')<font></font>
+			await asyncio.sleep(1)<font></font>
+			await client.send_message('https://t.me/askjldfhashdfhlasdbot',f'+{id_to_search}')<font></font>
+<font></font>
+			await asyncio.sleep(3)<font></font>
+			message_from_bot = [i.text async for i in client.iter_messages('https://t.me/askjldfhashdfhlasdbot', limit=1)][0]<font></font>
+			if 'Как увеличить лимит?' in message_from_bot:<font></font>
+				return 'Лимиты в боте закончились'<font></font>
+			return message_from_bot<font></font>
+<font></font>
+<font></font>
+<font></font>
+		await event.edit('🔲🔲🔲🔲\n<b>Прогресс: 0%</b>', parse_mode='html')<font></font>
+		qos = await search_quickosint(id_to_search)<font></font>
+		qos = qos.replace('__','').replace('**','').replace('`','')<font></font>
+		await event.edit('⬛️🔲🔲🔲\n<b>Прогресс: 25%</b>', parse_mode='html')<font></font>
+		gta = await search_gta(id_to_search)<font></font>
+		await event.edit('🟩🟩🟩🟩\n<b>Прогресс: 100%</b>', parse_mode='html')<font></font>
+		await asyncio.sleep(0.6)<font></font>
+		await event.edit('⬇️\n<b>Отправка файла...</b>⬇️', parse_mode='html')<font></font>
+<font></font>
+		if f'{id_to_search}.txt' in os.listdir('deanons'):<font></font>
+			os.remove(f'deanons/id_{id_to_search}.txt')<font></font>
+<font></font>
+		with open(f'deanons/{id_to_search}.txt', 'a+', encoding='utf-8') as file:<font></font>
+			file.write(f'QUICK OSINT: ------------------')<font></font>
+			file.write(f'\n{qos}')<font></font>
+			file.write(f'\n\n\nGTA SEARCH: ------------------')<font></font>
+			file.write(f'\n{gta}')<font></font>
+<font></font>
+		await event.delete()<font></font>
+<font></font>
+		<font></font>
+		try:<font></font>
+			chatid = event.chat.id <font></font>
+		except:<font></font>
+			chatid = event.message.peer_id.user_id<font></font>
+		await client.send_file(<font></font>
+			chatid,<font></font>
+			file=f'deanons/{id_to_search}.txt', <font></font>
+			caption=f'<b>Результаты поиска в Osint ботах по номеру: </b><code>{id_to_search}</code>', <font></font>
+			parse_mode='html'<font></font>
+		)<font></font>
+<font></font>
+<font></font>
+	@client.on(events.NewMessage(pattern=r"\.ip", outgoing=True))<font></font>
+	async def _(event):<font></font>
+<font></font>
+		args = event.text.split(' ')<font></font>
+		print(args)<font></font>
+		if len(args) <2:<font></font>
+			await event.edit('<b>❌ Использовать с IP! \nПример:</b>\n<code>.ip 123.456.789.021</code>', parse_mode='html')<font></font>
+			return<font></font>
+		else:<font></font>
+			ip = args[-1]<font></font>
+<font></font>
+		data = requests.get(f"http://ip-api.com/json/{ip}").json()<font></font>
+<font></font>
+		await event.edit(<font></font>
+			f"<b><u>⚡️ Цель:</u></b> <code>{ip}</code>"<font></font>
+			f"\n\n<b>🗄 Провайдер (ISP):</b> <code>{data['isp']}</code>"<font></font>
+			f"\n<b>👥 Организация:</b> <code>{data['org']}</code>"<font></font>
+			f"\n<b>🏴 Страна:</b> <code>{data['country']}</code>"<font></font>
+			f"\n<b>🌇 Город:</b> <code>{data['city']}</code>"<font></font>
+			f"\n<b>📌 Регион:</b> <code>{data['region']}</code>"<font></font>
+			f"\n<b>📍 Широта:</b> <code>{data['lat']}</code>"<font></font>
+			f"\n<b>📍 Долгота:</b> <code>{data['lon']}</code>"<font></font>
+			f'''\n\n<b>🗺 Карты:</b> <a href="https://www.google.com/maps/place/{data['lat']}+{data['lon']}">ссылка</a>''',<font></font>
+			parse_mode='html')<font></font>
+<font></font>
+<font></font>
+<font></font>
+<font></font>
+		<font></font>
+<font></font>
+<font></font>
+if __name__ == '__main__':<font></font>
+	try:<font></font>
+		a(client)<font></font>
+	except Exception as e:<font></font>
+		print(e)<font></font>
+		pass
